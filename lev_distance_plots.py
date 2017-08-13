@@ -36,11 +36,12 @@ def read_file (input_file):
     sequence_list.pop(0) # Remove first element of list
 
     return sequence_list
-
+# calculates levenshtein distance the dataset
 def lev_distance_metric(x,y):
         i, j = int(x[0]), int(y[0])
         return levenshtein(dataset[i], dataset[j])
 
+# Allows for user to define input file.
 #user_file_path = input("Enter file path: ")
 #dataset = read_file(user_file_path)
 
