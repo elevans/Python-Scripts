@@ -26,16 +26,23 @@ def read_file (input_file):
 
     # Remove sequence names from list
     sequence_list = [""]
+    concat_sequence = ""
 
     for line in content:
-        if ">" not in line:
-            sequence_list.append(line)
+        if ">" in line:
+            sequence_list.append(concat_sequence)
+            concat_sequence = ""
         else:
-            pass
+            concat_sequence += line
 
-    sequence_list.pop(0) # Remove first element of list
+    # Add last element to sequence_list
+    sequence_list.append(concat_sequence)
+
+    # Remove first two "" entries from seuqnce_list
+    del sequence_list[:2]
 
     return sequence_list
+
 # calculates levenshtein distance the dataset
 def lev_distance_metric(x,y):
         i, j = int(x[0]), int(y[0])
@@ -61,7 +68,7 @@ dbscan_dataset = dbscan(X, eps=5, min_samples=2, metric=lev_distance_metric, alg
 core_sample_indicies = dbscan_dataset[0]
 labels = dbscan_dataset[1]
 
-print(dbscan_dataset)
+print(dataset)
 
 # alternative DBSCAN code
 #dbscan_dataset = cluster.DBSCAN(eps=0.1, min_samples=5, metric='euclidean').fit_predict(X)
