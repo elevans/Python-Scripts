@@ -50,30 +50,27 @@ def lev_distance(s, u, v):
 user_file_path = input("Enter file path: ")
 dataset = read_file(user_file_path)
 
+# Take user input values for epsilon and minimum sample number
+eps_user_in = int(input("Enter epsilon value: "))
+min_samples_user_in = int(input("Enter minimum sample number: "))
+
+# Reshape dataset into a column.  This is necessary for processing
 dataset_reshape = np.arange(len(dataset)).reshape(-1,1)
 
+# Compute DBSCAN
 dataset_pairwise = pairwise_distances(dataset_reshape, metric=partial(lev_distance, dataset))
-dbscan_model = cluster.DBSCAN(eps=0.1, min_samples=1, metric='euclidean', algorithm='brute').fit(dataset_pairwise)
+dbscan_model = cluster.DBSCAN(eps=eps_user_in, min_samples=min_samples_user_in, metric='euclidean', algorithm='brute').fit(dataset_pairwise)
 
-print("Dataset Levenshtein output: ", dataset_pairwise)
+# Print parameters and DBSCAN output values
+print("Dataset Levenshtein output: \n", dataset_pairwise)
 print("DBSCAN Model: ", dbscan_model)
 print("DBSCAN Core indicies: ", dbscan_model.core_sample_indices_)
 print("DBSCAN Labels: ", dbscan_model.labels_)
 
-#Plot output
+# Plot output
 plot_title_user_in = input("Enter plot title: ")
 plot_file_name_user_in = input("Enter output file name: ")
 fig, ax = plt.subplots(figsize=(10,8))
 ax.set_title(plot_title_user_in, fontsize=14)
-ax.scatter(dataset_pairwise[:,0], dataset_pairwise[:,1], c=dbscan_model.labels_, s=50, alpha=0.9, cmap=plt.cm.Set1)
+ax.scatter(dataset_pairwise[:,0], dataset_pairwise[:,1], c=dbscan_model.labels_, s=25, alpha=0.9, cmap=plt.cm.Set1)
 plt.savefig(plot_file_name_user_in + ".png")
-
-#############################################################################################
-# Github bug suggestion: https://github.com/scikit-learn/scikit-learn/issues/3737
-#dataset_pairwise = pairwise_distances(dataset_reshape, metric=partial(lev_distance, dataset))
-#dbscan_dataset = DBSCAN(eps=0.1, min_samples=5, metric='euclidean').fit(dataset_pairwise)
-
-# Note: dbscan_dataset[0] are n_core_samples and dbscan_dataset[1] are labels
-#dbscan_dataset = dbscan(dataset_reshape, eps=5, min_samples=2, metric=lev_distance_metric, algorithm='brute')
-#core_sample_indicies = dbscan_dataset[0]
-#labels = dbscan_dataset[1]
