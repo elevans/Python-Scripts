@@ -3,6 +3,7 @@ matplotlib.use('Agg')
 
 import numpy as np
 import matplotlib.pyplot as plt
+import decimal
 
 from sklearn.cluster import dbscan, DBSCAN
 from sklearn import metrics, cluster, datasets, mixture
@@ -51,7 +52,7 @@ user_file_path = input("Enter file path: ")
 dataset = read_file(user_file_path)
 
 # Take user input values for epsilon and minimum sample number
-eps_user_in = int(input("Enter epsilon value: "))
+eps_user_in = decimal.Decimal(input("Enter epsilon value: "))
 min_samples_user_in = int(input("Enter minimum sample number: "))
 
 # Reshape dataset into a column.  This is necessary for processing
@@ -64,13 +65,13 @@ dbscan_model = cluster.DBSCAN(eps=eps_user_in, min_samples=min_samples_user_in, 
 # Print parameters and DBSCAN output values
 print("Dataset Levenshtein output: \n", dataset_pairwise)
 print("DBSCAN Model: ", dbscan_model)
-print("DBSCAN Core indicies: ", dbscan_model.core_sample_indices_)
-print("DBSCAN Labels: ", dbscan_model.labels_)
+print("DBSCAN Core indicies: \n", dbscan_model.core_sample_indices_)
+print("DBSCAN Labels: \n", dbscan_model.labels_)
 
 # Plot output
 plot_title_user_in = input("Enter plot title: ")
 plot_file_name_user_in = input("Enter output file name: ")
 fig, ax = plt.subplots(figsize=(10,8))
 ax.set_title(plot_title_user_in, fontsize=14)
-ax.scatter(dataset_pairwise[:,0], dataset_pairwise[:,1], c=dbscan_model.labels_, s=25, alpha=0.9, cmap=plt.cm.Set1)
+ax.scatter(dataset_pairwise[:,0], dataset_pairwise[:,1], c=dbscan_model.labels_, s=15, alpha=0.9, cmap=plt.cm.Set1)
 plt.savefig(plot_file_name_user_in + ".png")
