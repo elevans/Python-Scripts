@@ -1,7 +1,8 @@
 # Python-Scripts
 
-Note that clustering is based off of min_samples and not entirely eps (i.e. epsilon).
+A random grouping of python scripts for performing various tasks such as:
 
-Ideal values
-eps = 100
-min_samples = 5
+Creating heat maps
+Experimenting with Scikit-Learn
+
+*Note dbscan_lev_distance does not work as intended

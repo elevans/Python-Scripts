@@ -78,6 +78,6 @@ plot_title_user_in = input("Enter plot title: ")
 plot_file_name_user_in = input("Enter output file name: ")
 fig, ax = plt.subplots(figsize=(15,12))
 ax.set_title(plot_title_user_in, fontsize=14)
-ax.scatter(dataset_pairwise[:,0], dataset_pairwise[:,1], c=dbscan_model.labels_, s=50, alpha=0.9, cmap=plt.cm.Set1)
+ax.scatter(dbscan_model.core_sample_indices_[:,0], dbscan_model.core_sample_indices_[:,1], c=dbscan_model.labels_, s=50, alpha=0.9, cmap=plt.cm.Set1)
 plt.savefig(plot_file_name_user_in + ".png")
 
