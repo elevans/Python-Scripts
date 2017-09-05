@@ -1,23 +1,23 @@
 # Python-Scripts
 
+A random grouping of python scripts for performing various tasks such as:
+
+Creating heat maps
+Experimenting with Scikit-Learn
+
 ## Flow Cytometry Cell Cycle Analysis
 
 -Dependencies-
 FlowCytometryTools (latest version)
 matplotlib (>1.13.1)
 scipy (latest version)
+ipython
 
 ## Installation
 ```bash
 $ sudo apt-get install python3-PyQt4
 $ pip3 install -U --user ete3
 ```
-
-A random grouping of python scripts for performing various tasks such as:
-
-Creating heat maps
-Experimenting with Scikit-Learn
-
 
 ## Credit
 Credit should be given to user 'themantalope' for explaining and providing code for converting a newick format tree to a scipy.cluster.hierachy linkage matrix:

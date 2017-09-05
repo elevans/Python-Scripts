@@ -38,11 +38,19 @@ def plot_gated_data(filename):
     non_debris_gated_flow_data.plot(['FSC-A', 'SSC-A'], cmap=cm.Blues, colorbar=True)
     plt.savefig('Non_debris_' + filename)
     plt.clf()
+    non_debris_gated_flow_data.plot(['FSC-A', 'FSC-H'], cmap=cm.Blues, colorbar=True)
+    plt.savefig('Non_debris_FSC-A_FSC-H_' + filename)
+    plt.clf()
     non_debris_gated_flow_data.plot(['FSC-A','FSC-H'], gates=[singles_polygate], cmap=cm.Blues, colorbar=True)
     plt.savefig('Non_debris_singles_polygate_' + filename)
     plt.clf()
     singles_flow_data.plot(['FSC-A','FSC-H'], cmap=cm.Blues, colorbar=True)
     plt.savefig('Singles_'+ filename)
+    plt.clf()
+    singles_flow_data.plot(['CyChrome-W', 'CyChrome-A'], cmap=cm.Blues, colorbar=True)
+    plt.xlabel('PI-W')
+    plt.ylabel('PI-A')
+    plt.savefig('Singles_PI-A_PI-W_' + filename)
     plt.clf()
     singles_flow_data.plot(['CyChrome-W', 'CyChrome-A'], gates=[cell_cycle_polygate], cmap=cm.Blues, colorbar=True)
     plt.xlabel('PI-W')
@@ -91,9 +99,9 @@ def calculate_cell_cycle_status():
     percent_g2 = 100 * (cells_in_g2 / total_cells)
     percent_s = 100 * (cells_in_s / total_cells)
 
-    print 'Cells in G1: ' + str(percent_g1) + '%'
-    print 'Cells in G2: ' + str(percent_g2) + '%'
-    print 'Cells in S: ' + str(percent_s) + '%'
+    print 'Cells in G1: ' + str(percent_g1) + ' %'
+    print 'Cells in G2: ' + str(percent_g2) + ' %'
+    print 'Cells in S: ' + str(percent_s) + ' %'
 
 # Input_file points to specific FCS file
 input_file = raw_input("Enter FCS file location: ")
@@ -115,7 +123,6 @@ singles_polygate = PolyGate([(50000,27000),(130000,75000),(130000,96000),(50000,
 singles_flow_data = non_debris_gated_flow_data.gate(singles_polygate)
 cell_cycle_polygate = PolyGate([(71000,41000),(100000,41000),(100000,110000),(73000,110000)],['CyChrome-W','CyChrome-A'],region='in',name='cell cycle')
 cell_cycle_flow_data = singles_flow_data.gate(cell_cycle_polygate)
-
 
 # Transform data
 tcell_cycle_flow_data = cell_cycle_flow_data.transform('hlog', channels=['Alexa Fluor 405-W', 'Alexa Fluor 405-A'], b=500)
