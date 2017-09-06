@@ -72,7 +72,7 @@ class ConvertTree:
 class Dendrogram:
 
     def SaveDendrogram (scipy_dmat, leaf_labels, output_file_name):
+        plt.figure(figsize=(10,10))
         dendro = sch.dendrogram(scipy_dmat, labels=leaf_labels)
         plt.savefig(output_file_name)
-        
         return
