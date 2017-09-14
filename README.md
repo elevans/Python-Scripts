@@ -13,7 +13,7 @@ matplotlib (>1.13.1)
 scipy (latest version)
 ipython
 
-## Installation
+## Installation - Seq_pheno_clustering
 ```bash
 $ sudo apt-get install python3-PyQt4
 $ pip3 install -U --user ete3
