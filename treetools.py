@@ -11,9 +11,9 @@ from itertools import combinations
 from tqdm import *
 
 class ConvertTree:
-
-    def ConvertNewick (user_input_file):
-
+    
+    def Newick (user_input_file):
+        
         tree = ClusterTree(user_input_file)
         leaves = tree.get_leaf_names()
         ts = TreeStyle()
@@ -47,7 +47,9 @@ class ConvertTree:
         # Convert dmat into a linkage distance matrix for scipy
         schlink = sch.linkage(scipy.spatial.distance.squareform(dmat),method='average',metric='euclidean')
 
-        return schlink
+        return dmat, schlink
+ 
+class Dendrogram:
 
     def ExtractLeafLabelsNewick (user_input_file):
 
@@ -69,10 +71,9 @@ class ConvertTree:
 
         return leaf_labels
 
-class Dendrogram:
-
     def SaveDendrogram (scipy_dmat, leaf_labels, output_file_name):
         plt.figure(figsize=(10,10))
         dendro = sch.dendrogram(scipy_dmat, labels=leaf_labels)
         plt.savefig(output_file_name)
+
         return
