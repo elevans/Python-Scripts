@@ -15,7 +15,7 @@ ipython
 
 ## Installation - Seq_pheno_clustering
 ```bash
-$ sudo apt-get install python3-PyQt4
+$ sudo apt-get install python3-pyqt4
 $ pip3 install -U --user ete3
 ```
 

@@ -10,9 +10,10 @@ from ete3 import ClusterTree, TreeStyle
 from itertools import combinations
 from tqdm import *
 
+
 class ConvertTree:
     
-    def Newick (user_input_file):
+    def newick (user_input_file):
         
         tree = ClusterTree(user_input_file)
         leaves = tree.get_leaf_names()
@@ -51,7 +52,7 @@ class ConvertTree:
  
 class Dendrogram:
 
-    def ExtractLeafLabelsNewick (user_input_file):
+    def extract_leaf_labels_newick (self, user_input_file):
 
         tree = ClusterTree(user_input_file)
         leaves = tree.get_leaf_names()
@@ -71,7 +72,7 @@ class Dendrogram:
 
         return leaf_labels
 
-    def SaveDendrogram (scipy_dmat, leaf_labels, output_file_name):
+    def save_dendrogram (self, scipy_dmat, leaf_labels, output_file_name):
         plt.figure(figsize=(10,10))
         dendro = sch.dendrogram(scipy_dmat, labels=leaf_labels)
         plt.savefig(output_file_name)
