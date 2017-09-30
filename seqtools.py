@@ -2,6 +2,8 @@ from progressbar import update_progress
 
 class ReadSequenceFile:
 
+    # TODO:  Write method to handle nexus fromat sequence files.
+
     def fasta(self, input_file):
 
         with open(input_file) as f:
@@ -32,18 +34,15 @@ class ReadSequenceFile:
 
         return seq_dict
 
-    #def nexus(self, input_file):
-
-     #   seq_dict = {}
-
-      #  return seq_dict
-
 class WriteSequenceFile:
+
+    # TODO: Write method for writing nexus format sequence files.
 
     def fasta(self, output_filename, input_seq_list):
 
         i = 0
 
+        # Write fasta format sequence files with proper formating.
         with open(output_filename, 'w') as f:
             while i < len(input_seq_list):
                 seq_name = str(i)
@@ -57,6 +56,8 @@ class WriteSequenceFile:
 
         
 class ParseSequences:
+
+    # TODO:  Write site_count_protein method for handling protein sequences.
 
     def remove_bad_seqs_DNA(self, input_seq_dict):
         
@@ -80,6 +81,7 @@ class ParseSequences:
 
             i += 1
 
+        # Calculate the total number of sequences that have been removed
         final_count = len(v)
         removed_count = initial_count - final_count
 
@@ -90,6 +92,8 @@ class ParseSequences:
     
     def remove_bad_seqs_protein(self, input_seq_dict):
         
+        # TODO:  bad_chars should be dynamic, the set should be defined as a user input string?  Write catch for duplicates since a set can't take duplicates.
+
         v = list(input_seq_dict.values())
         initial_count = len(v)
 
@@ -98,7 +102,7 @@ class ParseSequences:
         # If sequences/strings containing any of the following characters, remove them from the sequence list.
         while i < len(v):
             line = v[i]
-            bad_chars = set('Xx')
+            bad_chars = set('*Xx')
 
             if any((c in bad_chars) for c in line):
                 v.pop(i)
@@ -167,5 +171,6 @@ class ParseSequences:
         removed_count = initial_count - updated_count
 
         print (str(removed_count) + " duplicate sequences removed")
-        print ("Dataset size: ", len(uniques_list))        
+        print ("Dataset size: ", len(uniques_list))
+                
         return uniques_list
