@@ -13,7 +13,7 @@ from tqdm import *
 
 class ConvertTree:
     
-    def newick (user_input_file):
+    def newick (self, user_input_file):
         
         tree = ClusterTree(user_input_file)
         leaves = tree.get_leaf_names()
