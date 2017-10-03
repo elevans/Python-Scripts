@@ -38,31 +38,33 @@ class WriteSequenceFile:
 
     # TODO: Write method for writing nexus format sequence files.
 
-    def fasta(self, output_filename, input_seq_list):
+    def fasta(self, output_filename, input_seqs):
 
         i = 0
 
         # Write fasta format sequence files with proper formating.
         with open(output_filename, 'w') as f:
-            while i < len(input_seq_list):
+            while i < len(input_seqs):
                 seq_name = str(i)
                 seq_name_write = ">"+ seq_name + "\n"
                 f.write(seq_name_write)
-                seq_data = input_seq_list[i] + "\n"
+                seq_data = input_seqs[i] + "\n"
                 f.write(seq_data)
                 i += 1
 
             f.close()
 
-        
+        print("Done.")
+
 class ParseSequences:
 
     # TODO:  Write site_count_protein method for handling protein sequences.
 
-    def remove_bad_seqs_DNA(self, input_seq_dict):
+    def remove_bad_seqs_DNA(self, input_seqs):
         
-        v = list(input_seq_dict.values())
-
+        # If passed a dict convert to list
+        converter = TypeConvert()
+        v = converter.dict_to_list(input_seqs)
         initial_count = len(v)
 
         i = 0
@@ -75,7 +77,7 @@ class ParseSequences:
             if any((c in bad_chars) for c in line):
                 v.pop(i)
                 print(line + " removed " + "index: " + str(i))
-                i = 0
+                i -=1
             else:
                 pass
 
@@ -90,11 +92,13 @@ class ParseSequences:
 
         return v
     
-    def remove_bad_seqs_protein(self, input_seq_dict):
+    def remove_bad_seqs_protein(self, input_seqs):
         
         # TODO:  bad_chars should be dynamic, the set should be defined as a user input string?  Write catch for duplicates since a set can't take duplicates.
 
-        v = list(input_seq_dict.values())
+        # If passed a dict convert to list
+        converter = TypeConvert()
+        v = converter.dict_to_list(input_seqs)
         initial_count = len(v)
 
         i = 0
@@ -107,7 +111,7 @@ class ParseSequences:
             if any((c in bad_chars) for c in line):
                 v.pop(i)
                 print(line + " removed " + "index: " + str(i))
-                i = 0 # trick is here ;)
+                i -= 1
             else:
                 pass
 
@@ -121,7 +125,12 @@ class ParseSequences:
 
         return v
 
-    def site_count_DNA(self, input_seq_list, site_number):
+    def site_count_DNA(self, input_seqs, site_number):
+
+        # If passed a dict convert to list
+        converter = TypeConvert()
+        v = converter.dict_to_list(input_seqs)
+        initial_count = len(v)
 
         nuc_pos = int(site_number) - 1
         i = 0
@@ -131,8 +140,8 @@ class ParseSequences:
         nuc_C = 0
         nuc_T = 0
 
-        while i < len(input_seq_list):
-            line = input_seq_list[i]
+        while i < len(v):
+            line = v[i]
             char = line[nuc_pos]
 
             if "A" == char:
@@ -146,7 +155,7 @@ class ParseSequences:
 
             i += 1
 
-        input_seq_total = len(input_seq_list)
+        input_seq_total = len(v)
 
         nuc_A_percent = 100 * (nuc_A/input_seq_total)
         nuc_G_percent = 100 * (nuc_G/input_seq_total)
@@ -158,10 +167,15 @@ class ParseSequences:
         print("C: " + str(nuc_C) + " ," + str(nuc_C_percent) + " %")
         print("T: " + str(nuc_T) + " ," + str(nuc_T_percent) + " %")
 
-    def remove_duplicates(self, input_seq_list):
+    def remove_duplicates(self, input_seqs):
+
+        # If passed a dict convert to list
+        converter = TypeConvert()
+        v = converter.dict_to_list(input_seqs)
+        initial_count = len(v)
 
         # Extract uniques and place them into a new list
-        raw_list = input_seq_list
+        raw_list = v
         uniques_list = []
         [uniques_list.append(x) for x in raw_list if x not in uniques_list]
 
@@ -174,3 +188,45 @@ class ParseSequences:
         print ("Dataset size: ", len(uniques_list))
                 
         return uniques_list
+
+    def sort_seqs(self, input_seqs):
+
+        # If passed a dict convert to list
+        converter = TypeConvert()
+        v = converter.dict_to_list(input_seqs)
+        initial_count = len(v)
+
+        seq_pos = int(input("Enter nucleotide or amino acid position: "))
+        seq_pos -= 1
+        seq_val = input("Enter nucleotide or amino acid character to sort: ")
+
+        sorted_list = []
+        excluded_list = []
+
+        i = 0
+
+        while i < len(v):
+            line = v[i]
+
+            if line[seq_pos] == seq_val:
+                sorted_list.append(line)
+            else:
+                excluded_list.append(line)
+            i += 1
+            update_progress(i/len(v))
+
+        print(str(len(sorted_list)) + " sequences in new dataset containing \'" + seq_val + "\'" + " at position " + str(seq_pos + 1) + ".")
+
+        return sorted_list, excluded_list
+
+class TypeConvert:
+
+    def dict_to_list(self, input_data):
+
+         # Checks if input data is a list or dict.  If a dict, convert to a list.  If a list, pass the data on.
+        if isinstance(input_data, dict):
+            v = list(input_data.values())
+        else:
+            v = input_data
+
+        return v
