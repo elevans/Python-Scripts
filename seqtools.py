@@ -106,7 +106,7 @@ class ParseSequences:
         # If sequences/strings containing any of the following characters, remove them from the sequence list.
         while i < len(v):
             line = v[i]
-            bad_chars = set('*Xx')
+            bad_chars = set('Xx')
 
             if any((c in bad_chars) for c in line):
                 v.pop(i)
@@ -218,6 +218,33 @@ class ParseSequences:
         print(str(len(sorted_list)) + " sequences in new dataset containing \'" + seq_val + "\'" + " at position " + str(seq_pos + 1) + ".")
 
         return sorted_list, excluded_list
+
+    def pattern_match(self, input_seqs):
+
+        # If passed a dict convert to list
+        converter = TypeConvert()
+        v = converter.dict_to_list(input_seqs)
+        initial_count = len(v)
+
+        pattern = input("Enter pattern to search for: ")
+
+        matched_list = []
+
+        i = 0
+
+        while i < len(v):
+            line = v[i]
+
+            if pattern in line:
+                matched_list.append(line)
+            else:
+                pass
+            i += 1
+            update_progress(i/len(v))
+
+        print(str(len(matched_list)) + " sequences contain the \'" + pattern + "\'" + ".")
+
+        return matched_list
 
 class TypeConvert:
 
