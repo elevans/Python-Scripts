@@ -242,7 +242,7 @@ class ParseSequences:
             i += 1
             update_progress(i/len(v))
 
-        print(str(len(matched_list)) + " sequences contain the \'" + pattern + "\'" + ".")
+        print(str(len(matched_list)) + " sequences contain the \'" + pattern + "\'" + "pattern.")
 
         return matched_list
 
