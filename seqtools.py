@@ -242,7 +242,10 @@ class ParseSequences:
             i += 1
             update_progress(i/len(v))
 
-        print(str(len(matched_list)) + " sequences contain the \'" + pattern + "\'" + "pattern.")
+        final_count = len(matched_list)
+        pattern_freq = 100 * (final_count/initial_count)
+
+        print(str(final_count) + " (" + str(round(pattern_freq, 2)) + " %) sequences contain the \'" + pattern + "\'" + "pattern.")
 
         return matched_list
 
