@@ -69,10 +69,13 @@ class ParseSequences:
 
         i = 0
 
+         # Get bad characters to remove (DNA ambiguity letters: 'UWSMKRYBDHVNuwsmkrybdhvn')
+        user_bad_chars = input("Enter characters to remove: ")
+
         # If sequences/strings containing any of the following characters, remove them from the sequence list.
         while i < len(v):
             line = v[i]
-            bad_chars = set('UWSMKRYBDHVNuwsmkrybdhvn')
+            bad_chars = set(user_bad_chars)
 
             if any((c in bad_chars) for c in line):
                 v.pop(i)
@@ -103,10 +106,13 @@ class ParseSequences:
 
         i = 0
 
+        # Get bad characters to remove
+        user_bad_chars = input("Enter characters to remove: ")
+
         # If sequences/strings containing any of the following characters, remove them from the sequence list.
         while i < len(v):
             line = v[i]
-            bad_chars = set('Xx')
+            bad_chars = set(user_bad_chars)
 
             if any((c in bad_chars) for c in line):
                 v.pop(i)
