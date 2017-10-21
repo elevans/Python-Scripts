@@ -2,6 +2,11 @@ from progressbar import update_progress
 
 class ReadSequenceFile:
 
+    """Read a FASTA file and returns a dictionary
+    
+        
+    """
+
     # TODO:  Write method to handle nexus fromat sequence files.
 
     def fasta(self, input_file):
@@ -35,6 +40,8 @@ class ReadSequenceFile:
         return seq_dict
 
 class WriteSequenceFile:
+
+
 
     # TODO: Write method for writing nexus format sequence files.
 
