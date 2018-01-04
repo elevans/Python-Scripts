@@ -51,6 +51,7 @@ Sequences in dataset:  5166
 |remove_bad_seqs_protein | Remove user defined bad seuences from protein data.|
 |site_count_DNA | Calculates the percentage of A/G/T/C at a user defined site.|
 
+
 - **remove_duplicates**: Removes duplicate sequences.
 - **sort_seqs**: Sorts sequences based on the user defined site and character.  Outputs a list containing the sequences meeting the defined criteria and sequences that do not.
 - **pattern_match**: Returns a list that match a specific user defined pattern.
