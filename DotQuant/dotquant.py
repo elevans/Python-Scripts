@@ -29,7 +29,7 @@ def detect_blobs (input_image_original, input_image_np_gray, image_path):
     """
 
     # Compute/detect blobs in image
-    blobs_log = blob_log(input_image_np_gray, max_sigma=max_sigma_val, num_sigma=num_sigma_val, threshold=threshold_val)
+    blobs_log = blob_log(input_image_np_gray, min_sigma=min_sigma_val, max_sigma=max_sigma_val, num_sigma=num_sigma_val, threshold=threshold_val)
     blobs_log[:, 2] = blobs_log[:, 2] * sqrt(2)
 
     # Console results
@@ -54,12 +54,20 @@ def detect_blobs (input_image_original, input_image_np_gray, image_path):
         c = plt.Circle((x, y), r, color='yellow', linewidth=2, fill=False)
         ax.add_patch(c)
 
-    #print(blob_radii)
     plt.show()
 
 def set_user_values ():
 
     print("Enter values.  Hit enter to select default values")
+
+    # User set min_sigma value
+    usr_min_sigma = input("min_sigma value (default = 1.0):")
+    if usr_min_sigma is "":
+        usr_min_sigma = float(1.0)
+        print("min_sigma is set to default value 1.0")
+    else:
+        usr_min_sigma = float(usr_min_sigma)
+        print("min_sigma value is set to: " +  str(usr_min_sigma)) 
 
     # User set max_sigma value
     usr_max_sigma = input("max_sigma value (default = 2.5):")
@@ -88,10 +96,10 @@ def set_user_values ():
         usr_threshold = float(usr_threshold)
         print("threshold value  is set to: " + str(usr_threshold))
 
-    return usr_max_sigma, usr_num_sigma, usr_threshold
+    return usr_min_sigma, usr_max_sigma, usr_num_sigma, usr_threshold
 
 path = input("Enter image path: \n")
 
-max_sigma_val, num_sigma_val, threshold_val = set_user_values()
+min_sigma_val, max_sigma_val, num_sigma_val, threshold_val = set_user_values()
 original_image, gray_image = load_image(path)
 detect_blobs(original_image, gray_image, path)
