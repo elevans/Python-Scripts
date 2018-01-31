@@ -17,7 +17,6 @@ def load_image (image_path):
     img = Image.open(image_path)
     img_np = np.array(img)
     img_np_gray = rgb2gray(img_np)
-    img_np_gray = exposure.equalize_hist(img_np_gray) # Improves detection
 
     return img, img_np_gray
 
