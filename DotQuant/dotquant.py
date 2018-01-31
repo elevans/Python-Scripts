@@ -58,43 +58,47 @@ def detect_blobs (input_image_original, input_image_np_gray, image_path):
 
 def set_user_values ():
 
+    """
+
+    """
+
     print("Enter values.  Hit enter to select default values")
 
     # User set min_sigma value
-    usr_min_sigma = input("min_sigma value (default = 1.0):")
+    usr_min_sigma = input("min_sigma value (default = 0.63):")
     if usr_min_sigma is "":
-        usr_min_sigma = float(1.0)
-        print("min_sigma is set to default value 1.0")
+        usr_min_sigma = float(0.63)
+        print("min_sigma is set to default value 0.63")
     else:
         usr_min_sigma = float(usr_min_sigma)
         print("min_sigma value is set to: " +  str(usr_min_sigma)) 
 
     # User set max_sigma value
-    usr_max_sigma = input("max_sigma value (default = 2.5):")
+    usr_max_sigma = input("max_sigma value (default = 4.0):")
     if usr_max_sigma is "":
-        usr_max_sigma = float(2.5)
-        print("max_sigma is set to default value 2.5")
+        usr_max_sigma = float(4.0)
+        print("max_sigma is set to default value 4.0")
     else:
         usr_max_sigma = float(usr_max_sigma)
         print("max_sigma value is set to: " + str(usr_max_sigma))
 
     # User set num_sigma value
-    usr_num_sigma = input("num_sigma value (default = 10.0):")
+    usr_num_sigma = input("num_sigma value (default = 50.0):")
     if usr_num_sigma is "":
-        usr_num_sigma = float(10)
-        print("num_sigma is set to default vaule 10.0")
+        usr_num_sigma = float(50.0)
+        print("num_sigma is set to default vaule 50.0")
     else:
         usr_num_sigma = float(usr_num_sigma)
         print("num_sigma value is set to: " +  str(usr_num_sigma))
 
     # Usesr set threshold value
-    usr_threshold = input("threshold value (default = 0.2):")
+    usr_threshold = input("threshold value (default = 0.05):")
     if usr_threshold is "":
-        usr_threshold = float(0.2)
-        print("threshold is set to default value 0.2")
+        usr_threshold = float(0.05)
+        print("threshold is set to default value 0.05")
     else:
         usr_threshold = float(usr_threshold)
-        print("threshold value  is set to: " + str(usr_threshold))
+        print("threshold value is set to: " + str(usr_threshold))
 
     return usr_min_sigma, usr_max_sigma, usr_num_sigma, usr_threshold
 
