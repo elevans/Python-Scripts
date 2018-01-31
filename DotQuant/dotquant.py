@@ -1,4 +1,5 @@
 from math import sqrt
+from skimage import exposure
 from skimage.feature import blob_log
 from skimage.color import rgb2gray
 from PIL import Image, ImageFont, ImageDraw
@@ -16,6 +17,7 @@ def load_image (image_path):
     img = Image.open(image_path)
     img_np = np.array(img)
     img_np_gray = rgb2gray(img_np)
+    img_np_gray = exposure.equalize_hist(img_np_gray) # Improves detection
 
     return img, img_np_gray
 
@@ -53,6 +55,12 @@ def detect_blobs (input_image_original, input_image_np_gray, image_path):
         blob_radii.append(r)
         c = plt.Circle((x, y), r, color='yellow', linewidth=2, fill=False)
         ax.add_patch(c)
+
+    # Write radii results to file
+
+    #output_radiii = open(image_path + "_blob_radii.txt", 'w')
+    #for item in blob_radii:
+    #    output_radiii.write("%s\n" % item)
 
     plt.show()
 
