@@ -37,9 +37,9 @@ def detect_blobs (input_image_original, input_image_np_gray, image_path):
 
     # Label the image with the number of punctae identified
     # Note: Other operating systems (Windows and OSX) may not have the FreeSans font.  Change the font as necessary for the system.
-    #image_draw = ImageDraw.Draw(input_image_original)
-    #image_font = ImageFont.truetype("FreeSans.ttf", 60)
-    #image_draw.text((0,0), str(len(blobs_log)) + " punctae", (255,255,255), font=image_font)
+    image_draw = ImageDraw.Draw(input_image_original)
+    image_font = ImageFont.truetype("FreeSans.ttf", 60)
+    image_draw.text((0,0), str(len(blobs_log)) + " punctae", (255,255,255), font=image_font)
 
     fig, ax = plt.subplots(1, 1, figsize=(15, 9), sharex=True, sharey=True, subplot_kw={'adjustable': 'box-forced'})
     ax.set_title(image_path)
@@ -100,10 +100,10 @@ def set_user_values ():
         print("num_sigma value is set to: " +  str(usr_num_sigma))
 
     # Usesr set threshold value
-    usr_threshold = input("threshold value (default = 0.05):")
+    usr_threshold = input("threshold value (default = 0.1):")
     if usr_threshold is "":
-        usr_threshold = float(0.05)
-        print("threshold is set to default value 0.05")
+        usr_threshold = float(0.1)
+        print("threshold is set to default value 0.1")
     else:
         usr_threshold = float(usr_threshold)
         print("threshold value is set to: " + str(usr_threshold))
