@@ -1,6 +1,12 @@
+import collections
 from progressbar import update_progress
 
-class ReadSequenceFile:
+#TODO: Recode to iteratre accross dictionaries, stop using lists if possible.
+#      Keep type convert in case list conversion is needed.
+
+# TODO: Check if pulling keys or values.  don't do single variable with items.
+
+class ReadFile:
 
     # TODO:  Write method to handle nexus fromat sequence files.
 
@@ -38,6 +44,8 @@ class ReadSequenceFile:
         seq_dict[seq_name] = concat_sequence        
         del seq_dict[""]
 
+        print(str(len(seq_dict)) + " sequences read.")
+
         return seq_dict
 
 class WriteFile:
@@ -46,238 +54,307 @@ class WriteFile:
 
     # TODO: Write method for writing nexus format sequence files.
 
-    def fasta(self, output_filename, input_seqs):
+    def fasta(self, input_seqs):
 
-        """Write a list as a FASTA file
+        """Write a dictionary as a FASTA file
 
         input -- type list
         output -- fasta file
         
         """
+        file_name = input("Enter output file name: ")
 
-        i = 0
-
-        # Write fasta format sequence files with proper formating.
-        with open(output_filename, 'w') as f:
-            while i < len(input_seqs):
-                seq_name = str(i)
-                seq_name_write = ">"+ seq_name + "\n"
+        with open(file_name, 'w') as f:
+            for k, v in input_seqs.items():
+                seq_name = str(k)
+                seq_data = str(v)
+                seq_name_write = ">" + seq_name + "\n"
                 f.write(seq_name_write)
-                seq_data = input_seqs[i] + "\n"
-                f.write(seq_data)
-                i += 1
+                seq_data_write = seq_data + "\n"
+                f.write(seq_data_write)
 
             f.close()
 
-        print("Done.")
+        print ("Done.")
 
-class ParseSequences:
-
-    # TODO:  Write site_count_protein method for handling protein sequences.
-
-    def remove_bad_seqs_DNA(self, input_seqs):
+    def gen_data(self, input_data):
         
-        # If passed a dict convert to list
-        converter = TypeConvert()
-        v = converter.dict_to_list(input_seqs)
-        initial_count = len(v)
+        # Write gen_freq and co_freq data to file (basically writes key/value pairs as a CSV file)
+        file_name = input("Enter file name: ")
 
-        i = 0
+        with open(file_name, 'w') as f:
+            for k, v in input_data.items():
+                f.write(str(k) + "," + str(v) + "\n")
+            
+        print("Done!")
 
-         # Get bad characters to remove (DNA ambiguity letters: 'UWSMKRYBDHVNuwsmkrybdhvn')
+        return
+
+class ParseData:
+
+    def remove_bad_seqs(self, input_seqs):
+
+         # Get bad characters to remove
         user_bad_chars = input("Enter characters to remove: ")
+        processed_seqs = {}
 
-        # If sequences/strings containing any of the following characters, remove them from the sequence list.
-        while i < len(v):
-            line = v[i]
+        for k, v in input_seqs.items():
+            seq = str(v)
             bad_chars = set(user_bad_chars)
 
-            if any((c in bad_chars) for c in line):
-                v.pop(i)
-                print(line + " removed " + "index: " + str(i))
-                i -=1
+            if any((c in bad_chars) for c in seq):
+                print("Sequence " + k + " removed.")
             else:
-                pass
-
-            i += 1
+                processed_seqs[k] = v
 
         # Calculate the total number of sequences that have been removed
-        final_count = len(v)
-        removed_count = initial_count - final_count
+        final_count = len(processed_seqs)
+        removed_count = len(input_seqs) - len(processed_seqs)
 
-        print(str(removed_count) + ' DNA sequences removed')
-        print('Sequences in dataset: ', final_count)
+        print(str(removed_count) + ' sequences removed')
+        print('Sequences in new dataset: ', final_count)
 
-        return v
-    
-    def remove_bad_seqs_protein(self, input_seqs):
-        
-        # TODO:  bad_chars should be dynamic, the set should be defined as a user input string?  Write catch for duplicates since a set can't take duplicates.
+        return processed_seqs
 
-        # If passed a dict convert to list
-        converter = TypeConvert()
-        v = converter.dict_to_list(input_seqs)
-        initial_count = len(v)
+    def remove_short_seqs(self, input_seqs):
 
-        i = 0
-
-        # Get bad characters to remove
-        user_bad_chars = input("Enter characters to remove: ")
-
-        # If sequences/strings containing any of the following characters, remove them from the sequence list.
-        while i < len(v):
-            line = v[i]
-            bad_chars = set(user_bad_chars)
-
-            if any((c in bad_chars) for c in line):
-                v.pop(i)
-                print(line + " removed " + "index: " + str(i))
-                i -= 1
-            else:
+        output_seqs = {}
+        input_length = (int(input("Enter sequence length to remove (will remove sequences of equal or shorter length): ")))
+                
+        for k, v in input_seqs.items():
+            seq = str(v)
+            if len(seq) <= input_length:
+                print("Sequence " + k + " removed. Length: " + str(len(seq)))
                 pass
+            else:
+                output_seqs[k] = v
+        
+        return output_seqs
 
-            i = i + 1
+    def remove_long_seqs(self, input_seqs):
 
-        final_count = len(v)
-        removed_count = initial_count - final_count
+        output_seqs = {}
+        input_length = (int(input("Enter sequence length to remove (will remove sequences of equal or longer length): ")))
 
-        print(str(removed_count) + ' protein sequences removed')
-        print('Sequences in dataset: ', final_count)
+        for k, v in input_seqs.items():
+            seq = str(v)
+            if len(seq) >= input_length:
+                print("Sequence " + k + " removed. Length: " + str(len(seq)))
+                pass
+            else:
+                output_seqs[k] = v
 
-        return v
+        return output_seqs
 
-    def site_count_DNA(self, input_seqs, site_number):
+    def sort_fixed_length(self, input_seqs):
 
-        # If passed a dict convert to list
-        converter = TypeConvert()
-        v = converter.dict_to_list(input_seqs)
-        initial_count = len(v)
+        output_seqs = {}
+        input_length = (int(input("Enter sequence length to store.  Sequences larger or smaller in length will be discarded: ")))
 
-        nuc_pos = int(site_number) - 1
-        i = 0
-     
-        nuc_A = 0
-        nuc_G = 0
-        nuc_C = 0
-        nuc_T = 0
+        for k, v in input_seqs.items():
+            seq = str(v)
+            if len(seq) == input_length:
+                output_seqs[k] = v
+            else:
+                print("Sequence " + k + " removed. Length: " + str(len(seq)))
+                pass
+        
+        return output_seqs
+    
+    def site_count(self, input_seqs):
 
-        while i < len(v):
-            line = v[i]
-            char = line[nuc_pos]
+        site_freq = {}
 
-            if "A" == char:
-                nuc_A += 1
-            elif "G" == char:
-                nuc_G += 1
-            elif "C" == char:
-                nuc_C += 1
-            elif "T" == char:
-                nuc_T += 1
+        input_pos = int(input("Enter sequence position to count: ")) - 1
 
-            i += 1
-
-        input_seq_total = len(v)
-
-        nuc_A_percent = 100 * (nuc_A/input_seq_total)
-        nuc_G_percent = 100 * (nuc_G/input_seq_total)
-        nuc_C_percent = 100 * (nuc_C/input_seq_total)
-        nuc_T_percent = 100 * (nuc_T/input_seq_total)
-
-        print("A: " + str(nuc_A) + " ," + str(nuc_A_percent) + " %")
-        print("G: " + str(nuc_G) + " ," + str(nuc_G_percent) + " %")
-        print("C: " + str(nuc_C) + " ," + str(nuc_C_percent) + " %")
-        print("T: " + str(nuc_T) + " ," + str(nuc_T_percent) + " %")
+        # TODO: Optionally store keys in a list and write out to file
+        for k, v in input_seqs.items():
+            seq = str(v)
+            c = seq[input_pos]
+            if c is not None:
+                if c in site_freq.keys():
+                    site_count_update = (site_freq[c] + 1)
+                    site_freq[c] = site_count_update
+                else:
+                    site_freq[c] = 1
+        
+        # Print out results
+        for k, v in site_freq.items():
+            print(k, v, str((v/len(input_seqs)) * 100) + " %")
 
     def remove_duplicates(self, input_seqs):
 
-        # If passed a dict convert to list
-        converter = TypeConvert()
-        v = converter.dict_to_list(input_seqs)
-        initial_count = len(v)
+        raw_list = []
+        unique_seqs = {}
 
-        # Extract uniques and place them into a new list
-        raw_list = v
+        for v in input_seqs.values():
+            raw_list.append(v)
+
         uniques_list = []
         [uniques_list.append(x) for x in raw_list if x not in uniques_list]
 
+        for k, v in input_seqs.items():
+            if v in uniques_list:
+                unique_seqs[k] = v
+                uniques_list.remove(v)
+            else:
+                pass
+                    
+
         # Count the number of duplicate sequences removed
-        initial_count = len(raw_list)
-        updated_count = len(uniques_list)
+        initial_count = len(input_seqs)
+        updated_count = len(unique_seqs)
         removed_count = initial_count - updated_count
 
-        print (str(removed_count) + " duplicate sequences removed")
-        print ("Dataset size: ", len(uniques_list))
-                
-        return uniques_list
+        print (str(removed_count) + " duplicate sequences removed.")
+        print ("New dataset size: " + str(len(unique_seqs)) + " sequences.")
+                    
+        return unique_seqs
 
     def sort_seqs(self, input_seqs):
+        input_char = input("Enter character to sort: ")
+        input_pos = int(input("Enter character position: ")) - 1
 
-        # If passed a dict convert to list
-        converter = TypeConvert()
-        v = converter.dict_to_list(input_seqs)
-        initial_count = len(v)
+        sorted_seqs = {}
 
-        seq_pos = int(input("Enter nucleotide or amino acid position: "))
-        seq_pos -= 1
-        seq_val = input("Enter nucleotide or amino acid character to sort: ")
-
-        sorted_list = []
-        excluded_list = []
-
-        i = 0
-
-        while i < len(v):
-            line = v[i]
-
-            if line[seq_pos] == seq_val:
-                sorted_list.append(line)
+        for k, v in input_seqs.items():
+            seq = str(v)
+            if seq[input_pos] == input_char:
+                sorted_seqs[k] = v
             else:
-                excluded_list.append(line)
-            i += 1
-            update_progress(i/len(v))
+                pass
 
-        print(str(len(sorted_list)) + " sequences in new dataset containing \'" + seq_val + "\'" + " at position " + str(seq_pos + 1) + ".")
+        print("input :", len(input_seqs))
+        print("output :", len(sorted_seqs))
 
-        return sorted_list, excluded_list
+        return sorted_seqs
 
     def pattern_match(self, input_seqs):
 
-        # If passed a dict convert to list
-        converter = TypeConvert()
-        v = converter.dict_to_list(input_seqs)
-        initial_count = len(v)
+        pattern = input("Enter pattern: ")
 
-        pattern = input("Enter pattern to search for: ")
+        sorted_seqs = {}
 
-        matched_list = []
-
-        i = 0
-
-        while i < len(v):
-            line = v[i]
-
-            if pattern in line:
-                matched_list.append(line)
+        for k, v in input_seqs.items():
+            seq = str(v)
+            if pattern in seq:
+                sorted_seqs[k] = v
             else:
                 pass
-            i += 1
-            update_progress(i/len(v))
 
-        final_count = len(matched_list)
-        pattern_freq = 100 * (final_count/initial_count)
+        print("input :", len(input_seqs))
+        print("output :", len(sorted_seqs))
+        
+        return sorted_seqs
 
-        print(str(final_count) + " (" + str(round(pattern_freq, 2)) + " %) sequences contain the \'" + pattern + "\'" + "pattern.")
+    def gen_freq(self, input_seqs):
+        seq_freq = collections.OrderedDict()
 
-        return matched_list
+        for k, v in input_seqs.items():
+            seq = str(v)
+            if seq is not None:
+                i = 0
+                for c in seq:
+                    i += 1
+                    char_pos = str(c + str(i))
+                    if char_pos in seq_freq.keys():
+                        freq_count_update = (seq_freq[char_pos] + 1)
+                        seq_freq[char_pos] = freq_count_update
+                    else:
+                        seq_freq[char_pos] = 1
 
-class TypeConvert:
+        # Convert counts into percents
+        seq_freq_percent = collections.OrderedDict()
 
-    def dict_to_list(self, input_data):
+        # Percent based on original item length of alignment (i.e. number of sequences)
+        for k in seq_freq.keys():
+            seq_freq_percent[k] = (seq_freq[k] / (len(input_seqs)))
 
-         # Checks if input data is a list or dict.  If a dict, convert to a list.  If a list, pass the data on.
-        if isinstance(input_data, dict):
-            v = list(input_data.values())
-        else:
-            v = input_data
+        return seq_freq_percent
 
-        return v
+    def co_freq(self, input_seqs):
+        input_char = input("Enter input character:  ")
+        input_pos = int(input("Enter sequence position:  ")) - 1
+
+        seq_freq = {}
+
+        match_count = 0
+
+        # TODO: Optionally store Keys in a list and write list out (matched sequences)
+        # Matches sequences based on character input and position,
+        # then creates ordered dict with character/position as key
+        # and count as value.
+        for k, v in input_seqs.items():
+            seq = str(v)
+            if input_char == seq[input_pos]:
+                i = 0
+                match_count += 1
+                for c in seq:
+                    i += 1
+                    char_pos = str(c + str(i))
+                    if char_pos in seq_freq.keys():
+                        freq_count_update = (seq_freq[char_pos] + 1)
+                        seq_freq[char_pos] = freq_count_update
+                    else:
+                        seq_freq[char_pos] = 1
+
+        # Convert counts into percents
+        seq_freq_percent = {}
+
+        # Percent based on match count
+        for l in seq_freq.keys():
+            seq_freq_percent[l] = (seq_freq[l]/match_count)
+
+        seq_freq_percent["Total number of sequences"] = match_count
+
+        return seq_freq_percent
+
+    def codon_freq(self, input_seqs):
+        codon_freq = collections.OrderedDict()
+
+        for k, v in input_seqs.items():
+            seq = str(v)
+            nuc_count = 0
+            codon_count = 0
+            codon = ""
+
+            for c in seq:
+                codon += c
+                nuc_count += 1
+
+                if nuc_count == 3:
+                    codon_count += 1 # codon number
+                    codon_pos = codon + "_" + str(codon_count) # key e.g. TAT_1
+
+                    # Check if codon triplet is already in dictionary, ifnot craete new key/value pair with 1 as initial value
+
+                    if codon_pos in codon_freq.keys(): # if codon already exists in dictionary update the value
+                        freq_count_update = (codon_freq[codon_pos] + 1) # whatever the value is at this key
+                        codon_freq[codon_pos] = freq_count_update # overwrite key with new value
+                        nuc_count = 0
+                        codon = ""
+                    else:
+                        codon_freq[codon_pos] = 1
+                        nuc_count = 0
+                        codon = ""
+                else:
+                    pass
+
+        codon_freq_percent = collections.OrderedDict()
+
+        # Percent based on original item length of alignment (i.e. number of sequences)
+        for k in codon_freq.keys():
+            codon_freq_percent[k] = (codon_freq[k] / (len(input_seqs))) 
+            
+        return codon_freq_percent
+
+
+
+
+codon_table = {"TTT" : "F", "TTC" : "F", "TTA" : "L", "TTG" : "L", "CTT" : "L", "CTC" : "L", "CTA" : "L", "CTG" : "L", "ATT" : "I",
+ "ATC" : "I", "ATA" : "I", "ATG" : "M", "GTT" : "V", "GTC" : "V", "GTA" : "V", "GTG" : "V", "TCT" : "S", "TCC" : "S", "TCA" : "S",
+  "TCG" : "S", "CCT" : "P", "CCC" : "P", "CCA" : "P", "CCG" : "P" , "ACT" : "T", "ACC" : "T", "ACA" : "T", "ACG" : "T", "GCT" : "A",
+   "GCC" : "A", "GCA" : "A", "GCG" : "A", "TAT" : "Y", "TAC" : "Y", "TAA" : "*", "TAG" : "*", "CAT" : "H", "CAC" : "H", "CAA" : "Q",
+    "CAG" : "Q", "AAT" : "N", "AAC" : "N", "AAA" : "K", "AAG" : "K", "GAT" : "D", "GAC" : "D", "GAA" : "E", "GAG" : "E", "TGT" : "C",
+     "TGC" : "C", "TGA" : "*", "TGG" : "W", "CGT" : "R", "CGC" : "R", "CGA" : "R", "CGG" : "R", "AGT" : "S", "AGC" : "S", "AGA" : "R",
+      "AGG" : "R", "GGT" : "G", "GGC" : "G", "GGA" : "G", "GGG" : "G"}

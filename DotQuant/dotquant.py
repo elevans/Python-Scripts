@@ -38,7 +38,7 @@ def detect_blobs (input_image_original, input_image_np_gray, image_path):
     # Label the image with the number of punctae identified
     # Note: Other operating systems (Windows and OSX) may not have the FreeSans font.  Change the font as necessary for the system.
     image_draw = ImageDraw.Draw(input_image_original)
-    image_font = ImageFont.truetype("FreeSans.ttf", 60)
+    image_font = ImageFont.truetype("arial.ttf", 60)
     image_draw.text((0,0), str(len(blobs_log)) + " punctae", (255,255,255), font=image_font)
 
     fig, ax = plt.subplots(1, 1, figsize=(15, 9), sharex=True, sharey=True, subplot_kw={'adjustable': 'box-forced'})
