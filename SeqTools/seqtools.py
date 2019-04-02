@@ -40,7 +40,7 @@ class ReadSequenceFile:
 
         return seq_dict
 
-class WriteSequenceFile:
+class WriteFile:
 
 
 
