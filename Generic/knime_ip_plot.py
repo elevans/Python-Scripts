@@ -14,34 +14,39 @@ def ReadCSV (input_CSV):
 
     return df
 
-def IntensityScatterPlot (input_df_lf):
-
-    #user_input_intensity_plot = input('Generate intensity scatter plot? (y/n): ')
+def UserConfig(input_df_lf):
 
     df_col_names = list(input_df_lf.columns.values)
 
     print ('Found the following channels: ')
+
     for x in df_col_names:
         if 'channel' in x:
             print(x)
         else:
             None
     
-    user_channel_select = 'mean_channel_' + input('Select channel number: ')
-    print(user_channel_select)
+    user_channel_select = 'mean_channel_' + input('Select channel number to process: ')
+    print('Selected: ' + user_channel_select)
+        
+    return user_channel_select
 
-    #if user_input_intensity_plot in user_response_yes:
-     #   df_signal_sum = input_df_lf.groupby('track').sum().reset_index()
-      #  print(df_signal_sum)
-        #sns.relplot(x='track', y=user_channel, hue='track', data=df_signal_sum) # displays each tracks total nuc and cyto signal over total time.
-    #else:
-     #   print('Intensity scatter plot skipped...')
+def IntensityScatterPlot (input_df_lf, user_channel_select):
 
-    #plt.show()
+    user_input_intensity_plot = input('Generate intensity scatter plot? (y/n): ')
+
+    if user_input_intensity_plot in user_response_yes:
+        df_signal_sum = input_df_lf.groupby('track').sum().reset_index()
+        print(df_signal_sum)
+        sns.relplot(x='track', y=user_channel_select, hue='track', data=df_signal_sum) # displays each tracks total nuc and cyto signal over total time.
+    else:
+        print('Intensity scatter plot skipped...')
+
+    plt.show()
 
     return None
 
-def TrackFilter (input_df_lf):
+def TrackFilter (input_df_lf, user_channel_select):
 
     #TODO:  Recode to allow selection of values above or below a user defined threashold
     df_signal_sum = input_df_lf.groupby('track').sum().reset_index()
@@ -56,23 +61,23 @@ def TrackFilter (input_df_lf):
         if user_input_trim_select == 1:
             sort_value = (float(input("Enter threashold value. Data points ABOVE this value will be removed: ")))
             for index, row in df_signal_sum.iterrows():
-                if row['signal'] <= sort_value:
+                if row[user_channel_select] <= sort_value:
                     sorted_tracks.append(row['track'])
         elif user_input_trim_select == 2:
             sort_value = (float(input("Enter threashold value. Data points BELOW this value will be removed: ")))
             for index, row in df_signal_sum.iterrows():
-                if row['signal'] >= sort_value:
+                if row[user_channel_select] >= sort_value:
                     sorted_tracks.append(row['track'])
         else:
             print("No selection made.  Skipping...")
             return input_df_lf
 
         sorted_tracks_unique = set(sorted_tracks) # just in case data output generates duplicate track names
-        df_sorted = pd.DataFrame(columns=['signal', 'time', 'track', 'label'])
+        df_sorted = pd.DataFrame(columns=[user_channel_select, 'time', 'track', 'loc'])
 
         for index, row in input_df_lf.iterrows():
             if row['track'] in sorted_tracks_unique:
-                df_sorted = df_sorted.append({'signal':row['signal'],'time':row['time'],'track':row['track'],'label':row['label']}, ignore_index=True)
+                df_sorted = df_sorted.append({user_channel_select:row[user_channel_select],'time':row['time'],'track':row['track'],'loc':row['loc']}, ignore_index=True)
             else:
                 None
 
@@ -83,11 +88,11 @@ def TrackFilter (input_df_lf):
         print('Trim data skipped...')
         return input_df_lf   
 
-def ShadeErrorPlot (input_df_lf):
+def ShadeErrorPlot (input_df_lf, user_channel_select):
     user_input_shade_plot = input('Generate shade error plot? (y/n): ')
 
     if user_input_shade_plot in user_response_yes:
-        sns.relplot(x='time', y='signal', hue='label', style='label', kind='line', data=input_df_lf)
+        sns.relplot(x='time', y=user_channel_select, hue='loc', style='loc', kind='line', data=input_df_lf)
         plt.show()
     else:
         print('Shade error plot skipped...')
@@ -104,10 +109,10 @@ def WriteDataFrame (input_df_lf):
 
     return None
     
-#input_data = input("Enter CSV file path: ")
-input_data = 'results.csv'
-data = ReadCSV(input_data)
-IntensityScatterPlot(data)
-#data = TrackFilter(data)
-#ShadeErrorPlot(data)
-#WriteDataFrame(data)
+input_file = input("Enter CSV file path: ")
+data = ReadCSV(input_file)
+channel = UserConfig(data)
+IntensityScatterPlot(data, channel)
+data = TrackFilter(data,channel)
+ShadeErrorPlot(data,channel)
+WriteDataFrame(data)
