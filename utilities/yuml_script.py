@@ -1,24 +1,22 @@
 import os
 
-# TODO: Include file output
-
 def GenerateYumlMapFolderFile(path):
     excluded_folders = ['main', 'java', '.ipynb_checkpoints', 'json', 'src', 'resources']
     excluded_files = ['.project', '.factorypath', '.classpath', '.envrc','pom.xml', '.mailmap', 'environment.yml', 'README.md', '.travis.yml', '.gitignore', 'plugins.config']
     ignored_dirs = ['.vscode', '.settings', '.travis', 'target', '.git']
     folder_hold = ''
-    yuml_output_list = []
+    yuml_output = []
     included_files = ''
 
     for root, dirs, files in os.walk(path):
 
-        # each loop is one file path/directory on the tree
+        # Note: each loop is one file path/directory on the tree
 
-        # setup variables
+        # setup loop variables
         filtered_root = ''
         loop_check = None
         
-        # filteres out ignored dirs (e.g.  /.git)
+        # filteres out ignored dirs
         for k in ignored_dirs:
             if k in root:
                 root = ''
@@ -30,79 +28,84 @@ def GenerateYumlMapFolderFile(path):
         else:
             filtered_root = root
 
-        # base folder of current filtered root
+        # base folder of current filtered root path
         folder_base = str(os.path.basename(filtered_root))
 
-        # get the folder above the current folder (i.e. base folder)
+        # get the folder above the current folder
         folder_up = os.path.dirname(filtered_root)
         folder_up = str(os.path.basename(folder_up))
 
-        # check if folder up is in excluded list, if so assign previous loops base folder to up
+        # check if folder_up is in excluded list, if so assign the previous loop's base folder to folder_up
         if folder_up in excluded_folders:
             folder_up = folder_hold
         else:
             pass
 
-        
-        # TODO: Add logic to capture files in folders that are in the excluded list.
-        # remove excluded folders and hold last base folder value
-
+        # check if folder_base is in excluded list, if so assign the previous loop's base folder to folder_up
         if folder_base in excluded_folders:
-            folder_up = folder_hold # checks if the current folder is excluded and assigns non-excluded up-level folder
+            folder_up = folder_hold
         else:
             if folder_base is '':
                 pass
             else:
+                # write yuml format string and store and store as an entry in yuml_output
                 folder_hold = folder_base
                 l = '[{}]-[{}]'.format(folder_up, folder_base)
-                yuml_output_list.append(l)
+                yuml_output.append(l)
 
+                # check if there are files in this current directory
                 if not files:
                     pass
                 else:
+                    # filter out excluded files and write partial yuml format string
                     for g in files:
                         if g in excluded_files:
                             pass
                         else:
                             included_files += '{}\\n'.format(g)
                                 
-                
+                    # check if yuml format string is empty, if not complete yuml string and append yuml_output
                     if included_files is '':
                         pass
                     else:
-                        # convert files list string to yuml format
                         k = '[{}]-[note: {}]'.format(folder_base, included_files)
-                        yuml_output_list.append(k)
+                        yuml_output.append(k)
+                        
+                        # mark that this loop has run, skipping the next loop which is intended for files in an exluded folder
                         loop_check = True
                         print('Current folder: {}\nFolder up: {}\n------------------------'.format(folder_base, folder_up))
         
-        # captures wanted files in a folder in the excluded list, links to previous accepted folder.
+        # check if the previous loop ran
         if loop_check is True: 
             pass
         else:
+
+            # check if there are files in directory (current folder is in excluded list)
             if not files:
                 pass
             else:
+                # filter out excluded files and write partial yuml format string
                 for h in files:
                     if h in excluded_files:
                         pass
                     else:
                         included_files += '{}\\n'.format(h)
-
+                
+                # check if yuml format string is empty, if not complete yuml string and append yuml_output
                 if included_files is '':
                     pass
                 else:
-                    if folder_up is '': # folder_up will be empty if root is empty due to ignored dir
+                    if folder_up is '':
                         pass
                     else:
                         k = '[{}]-[note: {}]'.format(folder_up, included_files)
-                        yuml_output_list.append(k)
+                        yuml_output.append(k)
                         print('Current folder: {}\nFolder up: {}\n------------------------'.format(folder_base, folder_up))
 
         # clear files string
         included_files = ''
 
-    return yuml_output_list
+    return yuml_output
 
 def GenerateYumlMapFolder(path):
 
