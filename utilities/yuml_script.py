@@ -15,7 +15,6 @@ def GenerateYuml(path):
         # each loop is one file path/directory on the tree
 
         # setup variables
-        filtered_files = []
         filtered_root = ''
         
         # filteres out ignored dirs (e.g.  /.git)
@@ -45,14 +44,17 @@ def GenerateYuml(path):
             folder_up = folder_hold
         else:
             pass
-
+        
+        # TODO: Add logic to capture files in folders that are in the excluded list.
         # remove excluded folders and hold last base folder value
         if folder_base in excluded_folders:
             pass
         else:
             if folder_base is '':
+
                 pass
             else:
+                print(files)
                 folder_hold = folder_base
                 l = '[{}]-[{}]'.format(folder_up, folder_base)
                 yuml_output_list.append(l)
@@ -84,7 +86,7 @@ def WriteYumlFile(yuml):
     print('Writing file...')
 
     # write output file to yuml
-    path = '/home/edward/Documents/Development/Repos/Personal/Python-Scripts/Generic/yuml_test.yuml'
+    path = '/home/edward/Documents/Development/Repos/Personal/Python-Scripts/utilities/yuml_test.yuml'
     with open(path, 'w') as f:
         f.write('// {type:deployment}\n// {generate:true}\n\n')
         for e in yuml:
@@ -93,6 +95,6 @@ def WriteYumlFile(yuml):
 
         f.close()
 
-user_path = '/home/edward/Documents/Development/Repos/LOCI/tutorials/howtos/src/main/java/howto/'
+user_path = '/home/edward/Documents/Development/Repos/LOCI/tutorials/maven-projects/add-rois'
 yuml_result = GenerateYuml(str(user_path))
 WriteYumlFile(yuml_result)
