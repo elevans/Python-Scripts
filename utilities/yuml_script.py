@@ -1,8 +1,11 @@
 import os
 
 def GenerateYumlMapFolderFile(path):
+
+    # pre-loop variables
     excluded_folders = ['main', 'java', '.ipynb_checkpoints', 'json', 'src', 'resources']
-    excluded_files = ['.project', '.factorypath', '.classpath', '.envrc','pom.xml', '.mailmap', 'environment.yml', 'README.md', '.travis.yml', '.gitignore', 'plugins.config']
+    excluded_files = ['.project', '.factorypath', '.classpath', '.envrc','pom.xml', '.mailmap', 'environment.yml', 'README.md', 
+        '.travis.yml', '.gitignore', 'plugins.config', 'blobs.png']
     ignored_dirs = ['.vscode', '.settings', '.travis', 'target', '.git']
     folder_hold = ''
     yuml_output = []
@@ -127,6 +130,6 @@ def WriteYumlFile(yuml):
 
         f.close()
 
-user_path = '/home/edward/Documents/Development/Repos/LOCI/tutorials/howtos'
+user_path = '/home/edward/Documents/Development/Repos/LOCI/tutorials'
 yuml_result = GenerateYumlMapFolderFile(str(user_path))
 WriteYumlFile(yuml_result)
