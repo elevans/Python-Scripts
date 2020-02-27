@@ -1,5 +1,7 @@
 import os
 
+# TODO: Make pre-loop variables global
+
 def GenerateYumlMapFolderFile(path):
 
     # pre-loop variables
@@ -55,7 +57,7 @@ def GenerateYumlMapFolderFile(path):
                 folder_hold = folder_base
                 l = '[{}]-[{}]'.format(folder_up, folder_base)
                 yuml_output.append(l)
-
+                
                 # check if there are files in this current directory
                 if not files:
                     pass
@@ -71,7 +73,7 @@ def GenerateYumlMapFolderFile(path):
                     if included_files is '':
                         pass
                     else:
-                        k = '[{}]-[note: {}]'.format(folder_base, included_files)
+                        k = '[{}]-[note: {}{{bg:wheat}}]'.format(folder_base, included_files)
                         yuml_output.append(k)
                         
                         # mark that this loop has run, skipping the next loop which is intended for files in an exluded folder
@@ -101,7 +103,7 @@ def GenerateYumlMapFolderFile(path):
                     if folder_up is '':
                         pass
                     else:
-                        k = '[{}]-[note: {}]'.format(folder_up, included_files)
+                        k = '[{}]-[note: {}{{bg:wheat}}]'.format(folder_up, included_files)
                         yuml_output.append(k)
                         print('Current folder: {}\nFolder up: {}\n------------------------'.format(folder_base, folder_up))
 
@@ -112,16 +114,65 @@ def GenerateYumlMapFolderFile(path):
 
 def GenerateYumlMapFolder(path):
 
-    # only output folder structure in yuml format
+    # pre-loop variables
+    excluded_folders = ['main', 'java', '.ipynb_checkpoints', 'json', 'src', 'resources']
+    ignored_dirs = ['.vscode', '.settings', '.travis', 'target', '.git']
+    folder_hold = ''
+    yuml_output = []
 
-    return
+    for root, dirs, files in os.walk(path):
+
+        # Note: each loop is one file path/directory on the tree
+
+        # setup loop variables
+        filtered_root = ''
+        loop_check = None
+        
+        # filteres out ignored dirs
+        for k in ignored_dirs:
+            if k in root:
+                root = ''
+            else:
+                pass
+        
+        if root is '':
+            pass
+        else:
+            filtered_root = root
+
+        # base folder of current filtered root path
+        folder_base = str(os.path.basename(filtered_root))
+
+        # get the folder above the current folder
+        folder_up = os.path.dirname(filtered_root)
+        folder_up = str(os.path.basename(folder_up))
+
+        # check if folder_up is in excluded list, if so assign the previous loop's base folder to folder_up
+        if folder_up in excluded_folders:
+            folder_up = folder_hold
+        else:
+            pass
+
+        # check if folder_base is in excluded list, if so assign the previous loop's base folder to folder_up
+        if folder_base in excluded_folders:
+            folder_up = folder_hold
+        else:
+            if folder_base is '':
+                pass
+            else:
+                # write yuml format string and store and store as an entry in yuml_output
+                folder_hold = folder_base
+                l = '[{}]-[{}]'.format(folder_up, folder_base)
+                yuml_output.append(l)
+
+    return yuml_output
 
 def WriteYumlFile(yuml):
 
     print('Writing file...')
 
     # write output file to yuml
-    path = '/home/edward/Documents/Development/Repos/Personal/Python-Scripts/utilities/yuml_test.yuml'
+    path = '/home/edward/Documents/Development/Repos/LOCI/tutorials/tutorials_map.yuml'
     with open(path, 'w') as f:
         f.write('// {type:deployment}\n// {generate:true}\n\n')
         for e in yuml:
@@ -130,6 +181,7 @@ def WriteYumlFile(yuml):
 
         f.close()
 
-user_path = '/home/edward/Documents/Development/Repos/LOCI/tutorials'
-yuml_result = GenerateYumlMapFolderFile(str(user_path))
+user_path = '/home/edward/Documents/Development/Repos/LOCI/tutorials/'
+yuml_result = GenerateYumlMapFolder(user_path)
+#yuml_result = GenerateYumlMapFolderFile(str(user_path))
 WriteYumlFile(yuml_result)
